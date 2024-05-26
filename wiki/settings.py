@@ -25,7 +25,7 @@ SECRET_KEY = '%710m*zic)#0u((qugw#1@e^ty!c)9j04956v@ly(_86n$rg)h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['85be9c7c-e10b-4944-b527-1ba704777ff2-00-kzehqriy2f0i.janeway.replit.dev']
 
 
 # Application definition

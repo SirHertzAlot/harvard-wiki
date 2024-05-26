@@ -8,3 +8,7 @@ def index(request):
         "entries": util.list_entries()
     })
 
+def create(request):
+    return render(request, "encyclopedia/create.html", {
+        "save_entry": util.save_entry()
+    })

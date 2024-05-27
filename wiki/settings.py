@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['85be9c7c-e10b-4944-b527-1ba704777ff2-00-kzehqriy2f0i.janeway.r
 # Application definition
 
 INSTALLED_APPS = [
+    'markdown',
     'encyclopedia',
     'entry',
     'django.contrib.admin',

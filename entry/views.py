@@ -1,13 +1,21 @@
+import markdown
+
 from django import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.generic import TemplateView
+from .models import Entry
 
 from encyclopedia import util
 
 class NewEntryForm(forms.Form):
     title = forms.CharField(label="title")
     content = forms.CharField(label="content")
+
+class EntryView(TemplateView):
+    model = Entry
+    template_name = 'post_list.html'
 
 # Create your views here.
 
@@ -19,9 +27,9 @@ def index(request):
 def read_entry(request, title):
 
     if request.method == "GET":
-        
+
         return render(request, "encyclopedia/read.html", {
-            "entries": util.get_entry(title)
+            "entry": util.get_entry(title)
         })
     else:
       # Redirect user to list of entries

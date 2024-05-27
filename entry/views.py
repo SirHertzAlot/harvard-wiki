@@ -1,4 +1,4 @@
-import markdown
+import random
 
 from django import forms
 from django.http import HttpResponseRedirect
@@ -19,11 +19,26 @@ class EntryView(TemplateView):
 
 # Create your views here.
 
+# Create Entry view with form to send markdown entry to backend for validation & processing. 
 def index(request):
     return render(request, "encyclopedia/create.html", {
         "form": NewEntryForm()
     })
 
+# Random Entry view to send markdown entry to client for viewing. 
+def random_entry(request):
+    
+    if request.method == "GET":
+        entries = util.list_entries
+        entry = random.choice(entries)
+        return render(request,"encyclopedia/read.html", {
+            "entry": entry
+        })
+    else:
+      # Redirect user to list of entries
+        return HttpResponseRedirect(reverse("index"))
+
+# Read Entry view to send markdown entry to client for viewing. 
 def read_entry(request, title):
 
     if request.method == "GET":
@@ -35,6 +50,7 @@ def read_entry(request, title):
       # Redirect user to list of entries
         return HttpResponseRedirect(reverse("index"))  
 
+# Create Entry form validation & processing. 
 def submit_entry(request):
     
     if request.method == 'POST':

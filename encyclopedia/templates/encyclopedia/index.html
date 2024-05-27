@@ -7,7 +7,7 @@
 {% block body %}
     <h1>All Pages</h1>
 
-    <ul>
+    <ul><a href="{% url 'entries.read' value="entry.title" %}">{{ entry }}</a>
         {% for entry in entries %}
             <li>{{ entry }}</li>
         {% endfor %}

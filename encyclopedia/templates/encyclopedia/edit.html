@@ -8,10 +8,11 @@
     <h1>{{ title }} entry</h1>
 
     <div>
-        <p>{{ content }}</p>
-        <button>
-            <a href="{% url 'entries:edit' %}">Edit Wiki</a>
-        </buton>
+        <form action="{% url 'entries:edit' %}" method="post">
+            {{ form }}
+            {% csrf_token %}
+            <button type="submit">Submit</button>
+        </form>
     </div>
 
 {% endblock %}

@@ -2,7 +2,7 @@
 {% load markdown_extras %}
 
 {% block title %}
-    Encyclopedia: Entry {{ entry }}
+    Encyclopedia: Entry {{ entry.title }}
 {% endblock %}
 
 {% block body %}
@@ -12,4 +12,8 @@
     <article class="flex flex-col my-20 mx-auto">
         {{ entry | markdown | safe }}
     </article>
+            
+    <button>
+        <a href="{% url 'entries:edit' %}">Edit Wiki</a>
+    </buton>
 {% endblock %}

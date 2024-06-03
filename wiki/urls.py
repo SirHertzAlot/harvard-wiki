@@ -19,5 +19,5 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("encyclopedia.urls")),
-    path('entry', include("entry.urls"))
+    path('wiki', include("entry.urls"))
 ]

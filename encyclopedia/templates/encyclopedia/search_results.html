@@ -11,10 +11,12 @@
         <h2>{{ message }}</h2>
     </header>
     <article class="flex flex-col my-20 mx-auto">
-        {% for entry in entries %}
-            <ul style="list_style: none; width: 200px; border-radius: 3px; border: 2px solid aliceblue; height: fit-content; margin: 20px; padding: 10px; flex-wrap: wrap; display: flex; flex-direction:row; justify-content: center; align-items:center;">
-                <li><a href="{% url 'entries:read' title=entry.title %}">{{ entry | markdown | safe }}</a></li>
-            </ul>
-        {% endfor %}
+        <ul style="list-style: none; width: 200px; border-radius: 3px; border: 2px solid aliceblue; height: fit-content; margin: 20px; padding: 10px; flex-wrap: wrap; display: flex; flex-direction: column; justify-content: center; align-items:center;">
+            {% for entry in entries %}
+                <li>
+                    <a href="{% url 'entries:read' title=entry.title %}">{{ entry | markdown | safe }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </article>
 {% endblock %}

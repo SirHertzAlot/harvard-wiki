@@ -30,7 +30,8 @@ def search_entry(request):
 
             #Go through all entries and try to see if the query is in the list.
             for entry in entries_list:
-                if query.lower() not in entry.lower():
+                processed_entry = entry.split()[0].lower()
+                if query.lower() not in processed_entry:
                     res = entries_list
                     message = f"Entry for {query} may not exist. Please try a different search query."
                     return render(request, "encyclopedia/search_results.html", {
@@ -39,13 +40,16 @@ def search_entry(request):
                         "form": SearchForm()
                     })
                 else:
-                    res = entry
+                    entry = util.get_entry(query)
+                    title = entry.splitlines(True)[0]
                     # Redirect user to list of entries
                     return render(request, "encyclopedia/read.html", {
-                        "entry": res
+                        "entry": entry,
+                        "title": title
                     })
     else:
         res = util.list_entries()
         return render(request, "encyclopedia/search_result.html", {
+            "form":SearchForm(),
             "entries": res
         })

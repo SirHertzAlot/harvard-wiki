@@ -24,7 +24,7 @@ class EntryView(TemplateView):
 # Create your views here.
     
 #Edit entry route
-def edit_entry(request):
+def edit_entry(request, title):
     if request.method == "POST":
         
         form = NewEntryForm(request.POST)
@@ -41,8 +41,12 @@ def edit_entry(request):
 
             # Redirect user to list of entries
             return HttpResponseRedirect(reverse("index"))
-    if request.method == 'GET':
+    else:
+        if request.session['entry'] == None:
+            request.session['entry'] = title
         return render(request, "encyclopedia/edit.html", {
+            "title": title,
+            "entry": util.get_entry(title),
             "entry_form": NewEntryForm(),
             "form": SearchForm()
         })
@@ -50,31 +54,36 @@ def edit_entry(request):
 # Create Entry view with form to send markdown entry to backend for validation & processing. 
 def index(request):
     return render(request, "encyclopedia/create.html", {
-        "placeholder": request.session['entry'],
+        #"placeholder": request.session['entry' or None],
         "entry_form": NewEntryForm(),
         "form": SearchForm()
     })
 
 # Random Entry view to send markdown entry to client for viewing. 
 def random_entry(request):
-    
-    if request.method == "GET":
-        entries = util.list_entries()
-        request.session['entry'] = random.choice(entries)
-        return render(request,"encyclopedia/read.html", {
-            "entry": util.get_entry(request.session['entry'])
+    if request.method == 'GET':
+        entry_list = util.list_entries()
+        entry = random.choice(entry_list)
+        title = entry.splitlines(True)[0]
+        return render(request,"encyclopedia/entry.html", {
+            "entry": util.get_entry(entry),
+            "title": title,
+            "form": SearchForm(),
         })
     else:
-      # Redirect user to list of entries
-        return HttpResponseRedirect(reverse("index"))
+        # Redirect user to list of entries
+        return HttpResponseRedirect(reverse("index"))  
 
 # Read Entry view to send markdown entry to client for viewing. 
 def read_entry(request, title):
 
     if request.method == "GET":
-
+        title = title.split("\r")[0]
+        request.session['entry'] = title
         return render(request, "encyclopedia/read.html", {
-            "entry": util.get_entry(title)
+            "entry": util.get_entry(title),
+            "title":  title,
+            "form": SearchForm()
         })
     else:
       # Redirect user to list of entries
@@ -83,10 +92,9 @@ def read_entry(request, title):
 # Create Entry form validation & processing. 
 def submit_entry(request):
     
+    form = NewEntryForm(request.POST)
+    
     if request.method == 'POST':
-        
-        form = NewEntryForm(request.POST)
-
         # Check if form data is valid (server-side)
         if form.is_valid():
 
@@ -99,11 +107,9 @@ def submit_entry(request):
 
             # Redirect user to list of entries
             return HttpResponseRedirect(reverse("index"))
-
-        else:
-
-            # If the form is invalid, re-render the page with existing information.
-            return render(request, "encyclopedia/create.html", {
-                "entry_form": form,
-                "form": SearchForm()
-            })
+    else:
+        # If the form is invalid, re-render the page with existing information.
+        return render(request, "encyclopedia/create.html", {
+            "entry_form": form,
+            "form": SearchForm()
+        })

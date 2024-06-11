@@ -1,4 +1,5 @@
 {% extends "encyclopedia/layout.html" %}
+{% load markdown_extras %}
 
 {% block title %}
     {{ title }} entry
@@ -8,8 +9,12 @@
     <h1>{{ title }} entry</h1>
 
     <div>
-        <form action="{% url 'entries:edit' %}" method="post">
-            {{ entry_form.subject }}
+        <h2>Entry to edit</h2>
+        <article style="margin: 20px 0px;">
+            {{ entry | markdown | safe }}
+        </article>
+        <form action="{% url 'entries:edit' title=title %}" method="post">
+            {{ entry_form }}
             {% csrf_token %}
             <button type="submit">Submit</button>
         </form>

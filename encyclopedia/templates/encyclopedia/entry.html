@@ -1,15 +1,19 @@
 {% extends "encyclopedia/layout.html" %}
+{% load markdown_extras %}
 
 {% block title %}
-    {{ title }} entry
+    Encyclopedia: Entry {{ title }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ title }} entry</h1>
-
-    <div>
-        <p>{{ entry }}</p>
-        
-    </div>
-
+    <header class="">
+        <h1>Encyclopedia: Entry</h1>
+    </header>
+    <article class="flex flex-col my-20 mx-auto">
+        {{ entry | markdown | safe }}
+    </article>
+            
+    <button>
+        <a style="padding: 10px; " href="{% url 'entries:edit' title=title %}">Edit {{ title | markdown | safe }}</a>
+    </buton>
 {% endblock %}

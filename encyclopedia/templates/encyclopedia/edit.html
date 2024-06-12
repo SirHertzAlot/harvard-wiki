@@ -13,12 +13,6 @@
          <form style="display: flex; flex-direction: column;" action="{% url 'entries:edit' title=title %}" method="post">
             {% csrf_token %}
             {{ entry_form }}
-            <!---<label for="title">Entry title</label>
-            <input style="width: fit-content;" type="text" name="title" value="{{ title }}">
-            <label for="content">Edit entry</label>
-            <textarea name="content" rows="2" cols="20">
-                {{ entry }}
-            </textarea>-->
             <button style="width: fit-content;" type="submit">Submit</button>
         </form> 
     </div>

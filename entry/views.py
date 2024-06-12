@@ -14,8 +14,12 @@ class SearchForm(forms.Form):
     q = forms.CharField(label="Search")
 
 class NewEntryForm(forms.Form):
-    title = forms.CharField(label="title")
-    content = forms.CharField(label="content")
+    title = forms.CharField(label="title", required="true")
+    content = forms.CharField(label="content", required="true")
+
+class EditEntryForm(forms.Form):
+    title = forms.CharField(label="title", disabled="true")
+    content = forms.CharField(widget=forms.Textarea, required="true")
 
 class EntryView(TemplateView):
     model = Entry
@@ -27,7 +31,7 @@ class EntryView(TemplateView):
 def edit_entry(request, title):
     if request.method == "POST":
         
-        form = NewEntryForm(request.POST)
+        form = EditEntryForm(request.POST)
 
         # Check if form data is valid (server-side)
         if form.is_valid():
@@ -44,10 +48,13 @@ def edit_entry(request, title):
     else:
         if request.session['entry'] == None:
             request.session['entry'] = title
+        clean_title = title.splitlines(True)[0].split("#")[1].strip()
+        entry = util.get_entry(clean_title)
+        
         return render(request, "encyclopedia/edit.html", {
-            "title": title,
-            "entry": util.get_entry(title),
-            "entry_form": NewEntryForm(),
+            "title": clean_title,
+            "entry": util.get_entry(clean_title),
+            "entry_form": EditEntryForm(initial={'content': entry, 'title': title}),
             "form": SearchForm()
         })
 

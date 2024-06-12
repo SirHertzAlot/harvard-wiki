@@ -15,7 +15,7 @@ class SearchForm(forms.Form):
 
 class NewEntryForm(forms.Form):
     title = forms.CharField(label="title", required="true")
-    content = forms.CharField(label="content", required="true")
+    content = forms.CharField(label="content", widget=forms.Textarea, required="true")
 
 class EditEntryForm(forms.Form):
     title = forms.CharField(label="title", disabled="true")
@@ -44,17 +44,17 @@ def edit_entry(request, title):
             util.save_entry(title, content)
 
             # Redirect user to list of entries
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse(f"/wiki/{title}"))
     else:
         if request.session['entry'] == None:
             request.session['entry'] = title
-        clean_title = title.splitlines(True)[0].split("#")[1].strip()
+        clean_title = title.splitlines(True)[0].split("#")[0].strip()
         entry = util.get_entry(clean_title)
         
         return render(request, "encyclopedia/edit.html", {
             "title": clean_title,
             "entry": util.get_entry(clean_title),
-            "entry_form": EditEntryForm(initial={'content': entry, 'title': title}),
+            "entry_form": EditEntryForm(initial={'content': entry, 'title': clean_title}),
             "form": SearchForm()
         })
 
@@ -87,9 +87,16 @@ def read_entry(request, title):
     if request.method == "GET":
         title = title.split("\r")[0]
         request.session['entry'] = title
-        return render(request, "encyclopedia/read.html", {
-            "entry": util.get_entry(title),
-            "title":  title,
+        entry = util.get_entry(title)
+        if entry is not None:
+            return render(request, "encyclopedia/read.html", {
+                "entry": util.get_entry(title),
+                "title":  title,
+                "form": SearchForm()
+            })
+        message = f"Entry for {title} does not exist. Please try a different entry A."
+        return render(request, "encyclopedia/error.html", {
+            "message": message,
             "form": SearchForm()
         })
     else:
@@ -108,6 +115,17 @@ def submit_entry(request):
             # Isolate the entry from the 'cleaned' version of form data
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
+
+            entries_list = util.list_entries()
+
+            for entry in entries_list:
+                processed_entry = entry.split()[0].lower()
+                if title.lower() in processed_entry:
+                    message = f"Entry for {title} already exists. Please try a different title."
+                    return render(request, "encyclopedia/error.html", {
+                        "message": message,
+                        "form": SearchForm()
+                    })
 
             # Add the new entry to our list of entries
             util.save_entry(title, content)
